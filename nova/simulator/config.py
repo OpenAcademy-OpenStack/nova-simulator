@@ -22,7 +22,7 @@ from oslo.config import cfg
 
 simulator_opts = [
     cfg.IntOpt('compute_processes',
-               default=1,
+               default=20,
                help='the number of compute services to simulate'),
 ]
 

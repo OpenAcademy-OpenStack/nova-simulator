@@ -18,26 +18,51 @@
 
 """Starter script for Simulator."""
 import sys
+import traceback
 
 from oslo.config import cfg
 
+from nova.conductor import rpcapi as conductor_rpcapi
 from nova import config
+import nova.db.api
+from nova import exception
 from nova import objects
+from nova.objects import base as objects_base
 from nova.openstack.common import log as logging
 from nova import service
 from nova import utils
 
 CONF = cfg.CONF
-CONF.import_opt('host', 'nova.netconf')
 CONF.import_opt('compute_topic', 'nova.compute.rpcapi')
+CONF.import_opt('use_local', 'nova.conductor.api', group='conductor')
 
-if __name__ == '__main__':
+def block_db_access():
+    class NoDB(object):
+        def __getattr__(self, attr):
+            return self
+
+        def __call__(self, *args, **kwargs):
+            stacktrace = "".join(traceback.format_stack())
+            LOG = logging.getLogger('nova.compute')
+            LOG.error('No db access allowed in nova-compute: %s', stacktrace)
+            raise exception.DBNotAllowed('nova-compute')
+
+    nova.db.api.IMPL = NoDB()
+
+def main(host):
+    objects.register_all()
     config.parse_args(sys.argv)
     logging.setup('nova')
     utils.monkey_patch()
+
+    if not CONF.conductor.use_local:
+        block_db_access()
+        objects_base.NovaObject.indirection_api = \
+            conductor_rpcapi.ConductorAPI()
+
     server = service.Service.create(binary='nova-compute',
                                         topic=CONF.compute_topic,
-                                        host='123',
+                                        host=host,
                                         db_allowed=False)
     service.serve(server)
     service.wait()

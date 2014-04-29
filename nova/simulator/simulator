@@ -9,7 +9,7 @@ CONF.import_opt('compute_processes', 'nova.compute.simulator')
 
 if __name__ == "__main__":
     workers = []
-    for i in xrange(10):
+    for i in xrange(CONF.compute_processes):
         host = '%s-%s' % (CONF.host, str(i + 1))
         p = Process(target=start.start, args=(host, ))
         p.start()

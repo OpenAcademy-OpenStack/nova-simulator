@@ -1042,7 +1042,6 @@ class ComputeManager(manager.SchedulerDependentManager):
                                        injected_files, admin_password,
                                        set_access_ip=set_access_ip)
 
-
                 self.driver.fake_update_host_resource(instance)
                 
         except exception.InstanceNotFound:

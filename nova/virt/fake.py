@@ -24,8 +24,6 @@ Allows nova testing w/o a hypervisor.  This module also documents the
 semantics of real hypervisor connections.
 
 """
-from random import randint
-
 from oslo.config import cfg
 
 from nova import block_device

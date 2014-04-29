@@ -41,6 +41,9 @@ class BaseRamFilter(filters.BaseHostFilter):
 
     def host_passes(self, host_state, filter_properties):
         """Only return hosts with sufficient available RAM."""
+        
+
+
         instance_type = filter_properties.get('instance_type')
         requested_ram = instance_type['memory_mb']
         free_ram_mb = host_state.free_ram_mb
@@ -52,6 +55,7 @@ class BaseRamFilter(filters.BaseHostFilter):
         memory_mb_limit = total_usable_ram_mb * ram_allocation_ratio
         used_ram_mb = total_usable_ram_mb - free_ram_mb
         usable_ram = memory_mb_limit - used_ram_mb
+        
         if not usable_ram >= requested_ram:
             LOG.debug(_("%(host_state)s does not have %(requested_ram)s MB "
                     "usable ram, it only has %(usable_ram)s MB usable ram."),

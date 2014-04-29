@@ -1,0 +1,74 @@
+
+[DEFAULT]
+flat_interface = eth0
+flat_network_bridge = br100
+vlan_interface = eth0
+public_interface = br100
+network_manager = nova.network.manager.FlatDHCPManager
+scheduler_default_filters = RetryFilter,AvailabilityZoneFilter,ComputeFilter,ComputeCapabilitiesFilter,ImagePropertiesFilter,CoreFilter,RamFilter
+quota_key_pairs = -1
+quota_security_group_rules = -1
+quota_security_groups = -1
+quota_injected_file_path_bytes = -1
+quota_injected_files = -1
+quota_metadata_items = -1
+quota_fixed_ips = -1
+quota_floating_ips = -1
+quota_ram = -1
+quota_cores = -1
+quota_instances = -1
+compute_driver = nova.virt.fake.FakeDriver
+compute_processes = 3
+glance_api_servers = 10.0.2.15:9292
+rabbit_password = password
+rabbit_host = localhost
+rpc_backend = nova.openstack.common.rpc.impl_kombu
+ec2_dmz_host = 10.0.2.15
+vncserver_proxyclient_address = 127.0.0.1
+vncserver_listen = 127.0.0.1
+vnc_enabled = true
+xvpvncproxy_base_url = http://10.0.2.15:6081/console
+novncproxy_base_url = http://10.0.2.15:6080/vnc_auto.html
+logging_exception_prefix = %(color)s%(asctime)s.%(msecs)03d TRACE %(name)s [01;35m%(instance)s[00m
+logging_debug_format_suffix = [00;33mfrom (pid=%(process)d) %(funcName)s %(pathname)s:%(lineno)d[00m
+logging_default_format_string = %(asctime)s.%(msecs)03d %(color)s%(levelname)s %(name)s [[00;36m-%(color)s] [01;35m%(instance)s%(color)s%(message)s[00m
+logging_context_format_string = %(asctime)s.%(msecs)03d %(color)s%(levelname)s %(name)s [[01;36m%(request_id)s [00;36m%(user_name)s %(project_name)s%(color)s] [01;35m%(instance)s%(color)s%(message)s[00m
+instances_path = /opt/stack/data/nova/instances
+lock_path = /opt/stack/data/nova
+state_path = /opt/stack/data/nova
+volume_api_class = nova.volume.cinder.API
+enabled_apis = ec2,osapi_compute,metadata
+instance_name_template = instance-%08x
+sql_connection = mysql://root:password@127.0.0.1/nova?charset=utf8
+metadata_workers = 4
+ec2_workers = 4
+osapi_compute_workers = 4
+my_ip = 10.0.2.15
+osapi_compute_extension = nova.api.openstack.compute.contrib.standard_extensions
+s3_port = 3333
+s3_host = 10.0.2.15
+default_floating_pool = public
+fixed_range = 
+force_dhcp_release = True
+dhcpbridge_flagfile = /etc/nova/nova.conf
+scheduler_driver = nova.scheduler.filter_scheduler.FilterScheduler
+rootwrap_config = /etc/nova/rootwrap.conf
+api_paste_config = /etc/nova/api-paste.ini
+allow_resize_to_same_host = True
+auth_strategy = keystone
+debug = True
+verbose = True
+
+[osapi_v3]
+enabled = True
+
+[keystone_authtoken]
+signing_dir = /var/cache/nova
+admin_password = password
+admin_user = nova
+admin_tenant_name = service
+auth_host = 10.0.2.15
+
+[spice]
+enabled = false
+html5proxy_base_url = http://10.0.2.15:6082/spice_auto.html

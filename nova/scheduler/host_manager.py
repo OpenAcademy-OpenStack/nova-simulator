@@ -427,6 +427,7 @@ class HostManager(object):
 
         # Get resource usage across the available compute nodes:
         compute_nodes = db.compute_node_get_all(context)
+
         seen_nodes = set()
         for compute in compute_nodes:
             service = compute['service']

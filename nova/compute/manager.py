@@ -1041,6 +1041,10 @@ class ComputeManager(manager.SchedulerDependentManager):
                                        network_info, block_device_info,
                                        injected_files, admin_password,
                                        set_access_ip=set_access_ip)
+
+
+                self.driver.fake_update_host_resource(instance)
+                
         except exception.InstanceNotFound:
             # the instance got deleted during the spawn
             # Make sure the async call finishes

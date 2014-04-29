@@ -370,6 +370,7 @@ class FakeDriver(driver.ComputeDriver):
 
     
     def fake_get_host_resource(self):
+        """Any calculation of host resource cost in simulator project in the future shoule be added here"""
         return host_resource
 
     def ensure_filtering_rules_for_instance(self, instance_ref, network_info):

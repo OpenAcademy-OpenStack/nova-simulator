@@ -772,7 +772,6 @@ class ComputeManager(manager.SchedulerDependentManager):
 
     def init_virt_events(self):
         self.driver.register_event_listener(self.handle_events)
-
     
     def set_service_id(self, service_id):
         self.service_id = service_id

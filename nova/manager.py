@@ -134,7 +134,6 @@ class Manager(base.Base, periodic_task.PeriodicTasks):
         """used by nova simulator"""
         pass
 
-
 class SchedulerDependentManager(Manager):
     """Periodically send capability updates to the Scheduler services.
 

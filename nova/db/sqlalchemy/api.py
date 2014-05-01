@@ -517,6 +517,17 @@ def compute_node_get_by_service_id(context, service_id):
 
 
 @require_admin_context
+def fake_get_service_id(context):
+    engine = get_engine()
+    service = models.Service.__table__
+
+    with engine.begin() as conn:
+        service_query = select(filter_columns(service)).\
+                            where((service.c.deleted == 0) &
+                                  (service.c.binary == 'nova-compute')).\
+                            order_by(service.c.id)
+        service_rows = conn.execute(service_query).fetchall()
+@require_admin_context
 def compute_node_get_all(context, no_date_fields):
 
     # NOTE(msdubov): Using lower-level 'select' queries and joining the tables
@@ -565,9 +576,7 @@ def compute_node_get_all(context, no_date_fields):
     for proxy in compute_node_rows:
         node = dict(proxy.items())
         node['service'] = services.get(proxy['service_id'])
-
         compute_nodes.append(node)
-
     # Join ComputeNode & ComputeNodeStat manually.
     # NOTE(msdubov): ComputeNode and ComputeNodeStat map 1-to-Many.
     #                Running time is (asymptotically) optimal due to the use

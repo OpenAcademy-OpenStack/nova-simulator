@@ -45,18 +45,6 @@ LOG = logging.getLogger(__name__)
 _FAKE_NODES = None
 
 
-host_resource = {'vcpus': 1,
-       'memory_mb': 1024,
-       'memory_mb_used' : 0,
-       'local_gb': 1028,
-       'vcpus_used': 0,
-       'memory_mb_used': 0,
-       'local_gb_used': 0,
-       'hypervisor_type': 'fake',
-       'hypervisor_version': '1.0',
-       'hypervisor_hostname': CONF.host,
-       'disk_available_least': 0,
-       'cpu_info': '?'}
 
 def set_nodes(nodes):
     """Sets FakeDriver's node.list.
@@ -115,21 +103,37 @@ class FakeDriver(driver.ComputeDriver):
           'cpu_info': {},
           'disk_available_least': 5000,
           }
+        
+
+        self.host_resource = {'vcpus': 1,
+       'memory_mb': 1024,
+       'memory_mb_used' : 0,
+       'local_gb': 1028,
+       'vcpus_used': 0,
+       'memory_mb_used': 0,
+       'local_gb_used': 0,
+       'hypervisor_type': 'fake',
+       'hypervisor_version': '1.0',
+       'hypervisor_hostname': CONF.host,
+       'service_id': -1,
+       'disk_available_least': 0,
+       'cpu_info': '?'}
 
         self._mounts = {}
         self._interfaces = {}
         if not _FAKE_NODES:
             nodes = []
-            for i in xrange(CONF.compute_processes):
-                if i == 0:
-                    nodes.append(CONF.host)
-                else:
-                    nodes.append('%s-%s' % (CONF.host, str(i)))
-            
+            nodes.append(CONF.host)
             set_nodes(nodes)
 
     def init_host(self, host):
         return
+    
+    def set_service_id(self, service_id):
+        """if we have multiple nodes in the future, modification should be done within set_node_servic_id"""
+        def set_node_service_id(self):
+            self.host_resource['service_id'] = service_id
+        set_node_service_id(self)
 
     def list_instances(self):
         return self.instances.keys()
@@ -362,8 +366,6 @@ class FakeDriver(driver.ComputeDriver):
         if nodename not in _FAKE_NODES:
             return {}
 
-        host_resource['hypervisor_hostname'] = nodename
-        
         host = self.fake_get_host_resource()
 
         return host
@@ -371,7 +373,7 @@ class FakeDriver(driver.ComputeDriver):
     
     def fake_get_host_resource(self):
         """Any calculation of host resource cost in simulator project in the future shoule be added here"""
-        return host_resource
+        return self.host_resource
 
     def ensure_filtering_rules_for_instance(self, instance_ref, network_info):
         return

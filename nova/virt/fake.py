@@ -24,6 +24,7 @@ Allows nova testing w/o a hypervisor.  This module also documents the
 semantics of real hypervisor connections.
 
 """
+
 from oslo.config import cfg
 
 from nova import block_device
@@ -44,19 +45,6 @@ LOG = logging.getLogger(__name__)
 
 _FAKE_NODES = None
 
-
-host_resource = {'vcpus': 1,
-       'memory_mb': 1024,
-       'memory_mb_used' : 0,
-       'local_gb': 1028,
-       'vcpus_used': 0,
-       'memory_mb_used': 0,
-       'local_gb_used': 0,
-       'hypervisor_type': 'fake',
-       'hypervisor_version': '1.0',
-       'hypervisor_hostname': CONF.host,
-       'disk_available_least': 0,
-       'cpu_info': '?'}
 
 def set_nodes(nodes):
     """Sets FakeDriver's node.list.
@@ -103,30 +91,22 @@ class FakeDriver(driver.ComputeDriver):
         super(FakeDriver, self).__init__(virtapi)
         self.instances = {}
         self.host_status_base = {
-          'vcpus': 2,
-          'memory_mb': 582,
-          'local_gb': 6000,
+          'vcpus': 100000,
+          'memory_mb': 8000000000,
+          'local_gb': 600000000000,
           'vcpus_used': 0,
           'memory_mb_used': 0,
-          'local_gb_used': 0,
+          'local_gb_used': 100000000000,
           'hypervisor_type': 'fake',
           'hypervisor_version': '1.0',
           'hypervisor_hostname': CONF.host,
           'cpu_info': {},
-          'disk_available_least': 5000,
+          'disk_available_least': 500000000000,
           }
-
         self._mounts = {}
         self._interfaces = {}
         if not _FAKE_NODES:
-            nodes = []
-            for i in xrange(CONF.compute_processes):
-                if i == 0:
-                    nodes.append(CONF.host)
-                else:
-                    nodes.append('%s-%s' % (CONF.host, str(i)))
-            
-            set_nodes(nodes)
+            set_nodes([CONF.host])
 
     def init_host(self, host):
         return
@@ -362,16 +342,18 @@ class FakeDriver(driver.ComputeDriver):
         if nodename not in _FAKE_NODES:
             return {}
 
-        host_resource['hypervisor_hostname'] = nodename
-        
-        host = self.fake_get_host_resource()
-
-        return host
-
-    
-    def fake_get_host_resource(self):
-        """Any calculation of host resource cost in simulator project in the future shoule be added here"""
-        return host_resource
+        dic = {'vcpus': 1,
+               'memory_mb': 8192,
+               'local_gb': 1028,
+               'vcpus_used': 0,
+               'memory_mb_used': 0,
+               'local_gb_used': 0,
+               'hypervisor_type': 'fake',
+               'hypervisor_version': '1.0',
+               'hypervisor_hostname': nodename,
+               'disk_available_least': 0,
+               'cpu_info': '?'}
+        return dic
 
     def ensure_filtering_rules_for_instance(self, instance_ref, network_info):
         return

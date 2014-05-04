@@ -515,6 +515,7 @@ def compute_node_get_by_service_id(context, service_id):
 
     return result
 
+
 @require_admin_context
 def compute_node_get_all(context, no_date_fields):
 

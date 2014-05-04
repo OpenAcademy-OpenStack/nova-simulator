@@ -773,14 +773,6 @@ class ComputeManager(manager.SchedulerDependentManager):
     def init_virt_events(self):
         self.driver.register_event_listener(self.handle_events)
     
-    def set_service_id(self, service_id):
-        self.service_id = service_id
-
-        def pass_service_id_to_driver(self):
-            self.driver.set_service_id(self.service_id)
-
-        pass_service_id_to_driver(self)
-
     def init_host(self):
         """Initialization for a standalone compute service."""
         self.driver.init_host(host=self.host)

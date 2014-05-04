@@ -130,9 +130,6 @@ class Manager(base.Base, periodic_task.PeriodicTasks):
         """
         pass
 
-    def set_service_id(self, service_id):
-        """used by nova simulator"""
-        pass
 
 class SchedulerDependentManager(Manager):
     """Periodically send capability updates to the Scheduler services.

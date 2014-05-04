@@ -158,8 +158,6 @@ class Service(service.Service):
             self.service_ref = self.conductor_api.service_get_by_args(ctxt,
                     self.host, self.binary)
             self.service_id = self.service_ref['id']
-            #transmit service id through compute manager to driver, used by fake driver only
-            self.manager.set_service_id(self.service_id)
         except exception.NotFound:
             self.service_ref = self._create_service_ref(ctxt)
 

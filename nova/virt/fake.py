@@ -115,7 +115,6 @@ class FakeDriver(driver.ComputeDriver):
        'hypervisor_type': 'fake',
        'hypervisor_version': '1.0',
        'hypervisor_hostname': CONF.host,
-       'service_id': -1,
        'disk_available_least': 0,
        'cpu_info': '?'}
 
@@ -128,12 +127,6 @@ class FakeDriver(driver.ComputeDriver):
 
     def init_host(self, host):
         return
-    
-    def set_service_id(self, service_id):
-        """if we have multiple nodes in the future, modification should be done within set_node_servic_id"""
-        def set_node_service_id(self):
-            self.host_resource['service_id'] = service_id
-        set_node_service_id(self)
 
     def list_instances(self):
         return self.instances.keys()

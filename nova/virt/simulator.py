@@ -1,5 +1,4 @@
-# vim: tabstop=4 shiftwidth=4 softtabstop=4
-#
+# vim: tabstop=4 shiftwidth=4 softtabstop=4 #
 #    Licensed under the Apache License, Version 2.0 (the "License"); you may
 #    not use this file except in compliance with the License. You may obtain
 #    a copy of the License at
@@ -30,14 +29,14 @@ CONF = cfg.CONF
 
 simulator_opts = [
     cfg.FloatOpt('simulator_delay_probability',
-                 default=0.5,
+                 default=0.0,
                  help='Delay a request issued to the SimulatorDriver with the'
                       'specified probability'),
     cfg.IntOpt('simulator_delay_ms',
                default=0,
                help='Delay a request by the specified number of milliseconds'),
     cfg.FloatOpt('simulator_error_probability',
-                 default=0.5,
+                 default=0.0,
                  help='Inject a NovaException to the SimulatorDriver with the'
                       'specified probability'),
     ]
@@ -63,7 +62,7 @@ def inject(p):
 
 
 def simulate(method):
-    if method.__name__ not in to_simulate:
+    if callable(method) and method.__name__ not in to_simulate:
         return method
 
     if inject(CONF.simulator_delay_probability):
@@ -81,6 +80,55 @@ def simulate(method):
 class SimulatorDriver(fake.FakeDriver):
     def __init__(self, virtapi, read_only=False):
         super(SimulatorDriver, self).__init__(virtapi, read_only)
+
+        nodes = []
+        nodes.append(CONF.host)
+        fake.set_nodes(nodes)
+        self.host_status_base = {
+            'vcpus': 2,
+            'memory_mb': 512,
+            'local_gb': 6000,
+            'vcpus_used': 0,
+            'memory_mb_used': 0,
+            'local_gb_used': 0,
+            'hypervisor_type': 'fake',
+            'hypervisor_version': '1.0',
+            'hypervisor_hostname': CONF.host,
+            'cpu_info': {},
+            'disk_available_least': 5000,
+        }
+        self.host_resource = {
+            'vcpus': 1,
+            'memory_mb': 1024,
+            'memory_mb_used': 0,
+            'local_gb': 1028,
+            'vcpus_used': 0,
+            'memory_mb_used': 0,
+            'local_gb_used': 0,
+            'hypervisor_type': 'fake',
+            'hypervisor_version': '1.0',
+            'hypervisor_hostname': CONF.host,
+            'disk_available_least': 0,
+            'cpu_info': '?'
+        }
+
+    def get_available_resource(self, nodename):
+        """Updates compute manager resource info on ComputeNode table.
+
+           Since we don't have a real hypervisor, pretend we have lots of
+           disk and ram.
+        """
+        if nodename not in fake._FAKE_NODES:
+            return {}
+
+        host = self.fake_get_host_resource()
+
+        return host
+
+    def fake_get_host_resource(self):
+        """Any calculation of host resource cost in simulator project "
+        in the future shoule be added here"""
+        return self.host_resource
 
     def __getattribute__(self, *args):
         f = super(SimulatorDriver, self).__getattribute__(*args)
